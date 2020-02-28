@@ -17,7 +17,7 @@ private fun rightPosition(secret: Iterable<IndexedValue<Char>>, guess: Iterable<
 private fun wrongPosition(secret: Iterable<IndexedValue<Char>>, guess: Iterable<IndexedValue<Char>>): Int {
     var wrongPosition: Int = 0
 
-    var secretColorsAvailableToMatchWithGuessedColors = secret
+    val secretColorsAvailableToMatchWithGuessedColors = secret
             .filter { !rightPositionIndexes(secret, guess).contains(it.index) }
             .toMutableList()
 

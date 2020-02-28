@@ -1,26 +1,5 @@
 type: edu
 files:
-- name: src/mastermind/evaluateGuess.kt
-  visible: true
-  placeholders:
-  - offset: 158
-    length: 1618
-    placeholder_text: TODO()
-    initial_state:
-      length: 6
-      offset: 158
-    initialized_from_dependency: false
-    selected: false
-    status: Unchecked
-  text: |
-    package mastermind
-
-    data class Evaluation(val rightPosition: Int, val wrongPosition: Int)
-
-    fun evaluateGuess(secret: String, guess: String): Evaluation {
-        TODO()
-    }
-  learner_created: false
 - name: src/mastermind/playMastermind.kt
   visible: true
   text: |
@@ -262,6 +241,27 @@ files:
 - name: src/mastermind/evaluateGuessWithStreams.kt
   visible: true
   learner_created: true
+- name: src/mastermind/evaluateGuess.kt
+  visible: true
+  placeholders:
+  - offset: 158
+    length: 1618
+    placeholder_text: TODO()
+    initial_state:
+      length: 6
+      offset: 158
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+  text: |
+    package mastermind
+
+    data class Evaluation(val rightPosition: Int, val wrongPosition: Int)
+
+    fun evaluateGuess(secret: String, guess: String): Evaluation {
+        TODO()
+    }
+  learner_created: false
 feedback_link: https://www.coursera.org/learn/kotlin-for-java-developers/programming/vmwVT/mastermind-game/discussions
 status: Unchecked
 record: -1
