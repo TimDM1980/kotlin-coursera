@@ -34,3 +34,8 @@
 - lists
   - `List<Int?>` is a list of nullable Ints
   - `List<Int>?` is a nullable list that contains Ints
+- extension functions on nullable receivers
+  - `fun String?.isEmptyOrNull(): Boolean`
+  - this way, you can call a function on an object that is null :-)
+    - remember that under the hood, extension functions are just wrappers that take the receiver as a 1st argument
+  - can be confusing to the readers
