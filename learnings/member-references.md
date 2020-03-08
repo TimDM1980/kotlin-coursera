@@ -1,0 +1,22 @@
+# member references
+
+- can replace a simple lambda that calls a member function or property
+  - e.g. suppose there is a Person class with an age property
+  - `people.maxBy { it.age }` can be replaced by `people.maxBy { Person::age }`
+- in Kotlin, you can't store a function in a variable
+  - you can store a lambda in a variable, see [lambdas](lambdas.md)
+  - you can however "reference" a function with `::`
+  - eg: `fun isEven(i: Int): Boolean = i % 2 == 0`
+  - you can store the reference as `val myPredicate = ::isEven`
+  - this is equivalent to `val myPredicate = { i: Int -> isEven(i) }`
+- if your lambda get to "heavy", you can extract it into a function and then pass the reference to that function
+  - `list.any(::isEven)`instead of `list.any { i: Int -> i % 2 == 0 }`
+- bound and non-bound
+  - non-bound: 
+    - can be called on any object of a certain class
+    - takes the object as an argument
+    - `Class::referenceMethod`
+  - bound:
+    - is attached to an instance
+    - `instance::referenceMethod`
+    - can also be bound to `this` in certain cases: `this::referenceMethod`
