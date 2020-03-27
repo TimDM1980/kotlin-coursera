@@ -41,3 +41,62 @@
       var counter: Int = 0
         private set
       ```
+- property in an interface
+    - a getter under the hood
+    - you can override in a class, by overriding the val (calculated once) or the getter (calculated each time)
+    - ```
+      interface User {
+        val nickname: String
+      }
+      
+      class FacebookUser(val accountId: Int) : User { 
+        override val nickname = getFacebookName(accountId)
+      }
+      
+      class SubscribingUser(val email: String) : User { 
+        override val nickname: String
+          get() = email.substringBefore('@')
+      }
+      ```
+- when you use a custom getter (= an overridden getter), you can't do a smart cast
+    - we call this an 'open property'
+    - you can introduce a local val (not var)
+- extension properties
+    - like extension functions, but then with properties
+    - ```
+      val String.lastIndex: Int
+        get() = this.length - 1
+      
+      "abc".lastIndex
+      ```
+    - you can also have mutable extension properties
+      ```
+      val Foo.bar: Int
+        set(value: Int) {
+          this. ...
+        }
+      
+      myFoo.bar = 3
+      ```
+- lazy property
+    - value computed only on first access
+    - `by lazy` syntax, followed by a lambda that computed the val
+    - ```
+      val lazyValue: String by lazy {
+        "Hello" 
+      }
+      ```
+- lateinit property
+    - solves the usecase where a property is not initialized from the start and you would have to cope with nullability because of that
+    - `lateinit var myData: MyData`
+    - now we can approach it as non nullable e.g. `myData.foo` instead of `myData?.foo`
+    - what if it was not properly initialized?
+        -  an UninitializedPropertyAccessException is thrown at runtime
+    - lateinit can't be a val, must be a var
+        - under the hood, it doesn't conform with final
+    - the property type must be non nullable
+        - can't be `MyData?`
+    - the property can't be a primitive type
+        - makes sense since a primitive can't be left uninitialized
+    - check if it was already initialized
+        - `this::myLateinitVar.isInitialized`
