@@ -14,6 +14,7 @@
       else -> "meh" // default case
     }
     ```
+  - very good for pattern matching needs, but no a full-fledged pattern matching feature 
   - check one of the values: `"y", "yes" -> "this means yes"`
   - checks on equality
     ```
