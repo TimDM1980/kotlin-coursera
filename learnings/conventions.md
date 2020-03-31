@@ -6,7 +6,7 @@
     - you can overload them yourself on your own classes
         - use the operator keyword
             - `operator fun Point.plus(other: Point): Point`
-        - there is a fixed list of operators and functionnames to override
+        - there is a fixed list of operators and function names to override
             - plus, minus, times, div, mod
             - unaryPlus, unaryMinus, not, inc, dec
 - other conventions
