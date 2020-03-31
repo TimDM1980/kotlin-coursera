@@ -2,43 +2,62 @@ package rationals
 
 import java.math.BigInteger
 
-data class Rational(var numerator: BigInteger, var denominator: BigInteger) : Comparable<Rational> {
+@Suppress("DataClassPrivateConstructor")
+data class Rational private constructor(val numerator: BigInteger, val denominator: BigInteger) : Comparable<Rational> {
 
-    init {
-        val gcd = numerator.gcd(denominator);
+    // it was a good choice to normalize during initialization,
+        // because we need the normalized form when comparing, printing, ...
+        // but how do we initialize???
+    // my solution: data class + var
+        // when using data class, we can't use VAL in the primary constructor because the properties must be recalculated (normalized)
+        // drawback: we must use var and we now have a mutable dataclass, never a good idea
+    // better solution: private primary constructor + companion object
+    // other solution: non-data class + val
+        // you can do the initialization in the init block
+        // drawback: roll your own equals, hashcode, toString, ...
 
-        this.numerator = numerator / gcd
-        this.denominator = denominator / gcd
+    companion object {
+        fun create(numerator: BigInteger, denominator: BigInteger): Rational =
+            normalize(numerator, denominator)
 
-        if (denominator < BigInteger.ZERO) {
-            this.numerator = -numerator
-            this.denominator = -denominator
+        private fun normalize(numerator: BigInteger, denominator: BigInteger): Rational {
+            val gcd = numerator.gcd(denominator)
+
+            var num = numerator / gcd
+            var denom = denominator / gcd
+
+            if (denominator < BigInteger.ZERO) {
+                num = -num
+                denom = -denom
+            }
+
+            return Rational(num, denom)
         }
     }
 
     operator fun plus(other: Rational): Rational {
-        return Rational(
+        return create(
                 (this.numerator * other.denominator) + (other.numerator * this.denominator),
                 this.denominator * other.denominator
         )
     }
 
     operator fun minus(other: Rational): Rational {
-        return Rational(
+        return create(
                 (this.numerator * other.denominator) - (other.numerator * this.denominator),
                 this.denominator * other.denominator
         )
     }
 
     operator fun times(other: Rational): Rational {
-        return Rational(
+        return create(
                 this.numerator * other.numerator,
                 this.denominator * other.denominator
         )
     }
 
     operator fun div(other: Rational): Rational {
-        return this * Rational(other.denominator, other.numerator)
+        return this * create(other.denominator, other.numerator)
     }
 
     override operator fun compareTo(other: Rational): Int {
@@ -46,7 +65,7 @@ data class Rational(var numerator: BigInteger, var denominator: BigInteger) : Co
     }
 
     operator fun unaryMinus(): Rational {
-        return Rational(-this.numerator, this.denominator)
+        return create(-this.numerator, this.denominator)
     }
 
     override fun toString(): String {
@@ -55,18 +74,18 @@ data class Rational(var numerator: BigInteger, var denominator: BigInteger) : Co
 }
 
 infix fun Int.divBy(other: Int): Rational =
-    Rational(this.toBigInteger(), other.toBigInteger())
+    Rational.create(this.toBigInteger(), other.toBigInteger())
 
 infix fun Long.divBy(other: Long): Rational {
-    return Rational(BigInteger.valueOf(this), BigInteger.valueOf(other))
+    return Rational.create(BigInteger.valueOf(this), BigInteger.valueOf(other))
 }
 
 infix fun BigInteger.divBy(other: BigInteger): Rational {
-    return Rational(this, other)
+    return Rational.create(this, other)
 }
 
 fun String.toRational(): Rational =
-    Rational(
+    Rational.create(
         this.split("/").first().toBigInteger(),
         this.split("/").getOrElse(1) { _ -> "1" }.toBigInteger()
     )
