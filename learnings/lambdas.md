@@ -43,7 +43,7 @@
   - `{ ... }()`
   - more readable: `run { ... }`
 - nullability
-  - funtion types that return nullable value VS nullable function types 
+  - function types that return nullable value VS nullable function types 
   - `() -> Int?` VS `(() -> Int)?`
   - how do you invoke a nullable function type?
     - `f()` won't compile
