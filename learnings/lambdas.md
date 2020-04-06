@@ -27,8 +27,11 @@
     - `map.mapValues { entry -> ...entry.key... }` can be written as `map.mapValues { (key, value) -> ...key... }`
     - `map.mapValues { (_, value) -> ... }` is an argument is not used, so you don't have to think of a name
 - collections
-    - filter, map, groupBy, associate, zip, ...
-    - result is again a Collection, no need for `stream()` or `Collectors`
+    - filter, map, groupBy, associate, zip, count, ...
+    - result is again a Collection
+        - this means it is not like the Java8 stream API!
+        - these functions are eager and immediate
+        - see sequences for the Java8 streams alternative in Kotlin
     - partition returns 2 collections! Is this a Pair under the hood?
 - don't use `it` in complicated or multi-line lambda's
 - you can store a lambda in a variable
