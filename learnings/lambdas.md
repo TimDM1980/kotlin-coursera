@@ -37,7 +37,7 @@
 - you can store a lambda in a variable
   - `val f = { x: Int, y: Int -> x + y }`
   - the type is: `(Int, Int) -> Int`
-  - `you can also write it with the type explicitely: `val f: (Int, Int) -> Int = { x: Int, y: Int -> x + y }`
+  - you can also write it with the type explicitly: `val f: (Int, Int) -> Int = { x: Int, y: Int -> x + y }`
   - you can invoke a function stored in a variable
     - `f(3, 5)`
   - you can also pass the variable to another function that takes a lambda as argument
@@ -97,3 +97,70 @@
         listOf(it, it)
       }   
       ```
+- "lambda with receiver" concept
+    - ```
+      val sb = StringBuilder()
+      with (sb) {
+        appendln("...")
+        ...
+      }
+      ```
+    - `with` is actually a function defined in the standard library
+        - ```
+          inline fun <T, R> with(
+            receiver: T,
+            block: T.() -> R 
+          ): R = receiver.block()
+          ```
+        - you can also call it as `with(sb, { lambda... })`
+        - for a function, if last argument is a lambda, it can be moved outside the parentheses
+    - you can use `this`, which points to the first argument
+        - `this` can also be omitted if you like
+        - works a bit like extension functions, where this also points to the object of the class you're extending
+    - you can store a "lambda with receiver" in a variable
+        - normal lamda: `val isEven: (Int) -> Boolean = { it % 2 == 0 }`
+            - call it: `isEven(0)`
+        - lamda with receiver: `val isOdd: Int.() -> Boolean = { this % 2 == 1 }`
+            - call it: `1.isOdd()`
+    - other example: 
+        ```
+        inline fun buildString(builderAction: StringBuilder.() -> Unit): String {
+        val stringBuilder = StringBuilder()
+          stringBuilder.builderAction()
+          return stringBuilder.toString() 
+        }
+      
+        buildString {
+          this.append("...")
+        }
+        ``` 
+    - combination of with and extension functions is very powerful!
+        - ```
+          // an extension function for Cell is defined on Board
+          // notice you can access Board internals in the implementation 
+          override fun Cell.getNeighbour(direction: Direction): Cell? {
+              return when(direction) {
+                    UP -> getCellOrNull(this.i-1, this.j)
+                    DOWN -> getCellOrNull(this.i+1, this.j)
+                    LEFT -> getCellOrNull(this.i, this.j-1)
+                    RIGHT -> getCellOrNull(this.i, this.j+1)
+              }
+          }
+          
+          // and you call it on a cell, with the context of a board
+          // calling getNeighbour on Cell feels more natural then calling it on Board 
+          with(board) {
+              cell.getNeighbour(Direction.UP)
+          }
+          ```  
+- more library functions:
+    ![](more_useful_library_functions_1.png)
+    - `run`: like `with`, but with null safety
+        - you can't protect against nullability when you do `with(f) { ... }`
+        - use run together with safe access operator when receiver can be null
+        - `f?.run { ... }` 
+        - run is also used to run a block of code when there is no receiver
+    - `let`: like `with`, but receiver is available as `it` instead of `this`
+    - `apply`: like `with`, but returns the receiver as a result
+    - `let`: like `apply`, but receiver is available as `it` instead of `this`
+    ![](more_useful_library_functions_2.png)
