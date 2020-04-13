@@ -10,12 +10,14 @@ fun <T> createGameBoard(width: Int): GameBoard<T> = BoardImpl(width)
 class BoardImpl<T>(override val width: Int) : SquareBoard, GameBoard<T> {
 
     private val cells = mutableListOf<Cell>()
-    private val values: MutableMap<Cell, T> = mutableMapOf()
+    private val values: MutableMap<Cell, T?> = mutableMapOf()
 
     init {
         for (i in 1..width) {
             for (j in 1..width) {
-                cells.add(Cell(i, j))
+                val cell = Cell(i, j)
+                cells.add(cell)
+                values[cell] = null
             }
         }
     }
@@ -55,30 +57,26 @@ class BoardImpl<T>(override val width: Int) : SquareBoard, GameBoard<T> {
     }
 
     override fun set(cell: Cell, value: T?) {
-        value?.let { values[cell] = it }
+        values[cell] = value
     }
 
     override fun filter(predicate: (T?) -> Boolean): Collection<Cell> {
-        return cells.map { cell -> Pair(cell, get(cell)) }
-                .filter({ pair -> pair.second.let(predicate) })
-                .map { it.first }
+        return values.filterValues(predicate)
+                .keys
     }
 
     override fun find(predicate: (T?) -> Boolean): Cell? {
-        return cells.map { cell -> Pair(cell, get(cell)) }
-                .firstOrNull({ pair -> pair.second.let(predicate) })
-                ?.first
+        return values.filterValues(predicate)
+                .keys
+                .firstOrNull()
     }
 
     override fun any(predicate: (T?) -> Boolean): Boolean {
-        return cells.map { cell -> get(cell) }
-                .any(predicate)
+        return values.values.any(predicate)
     }
 
     override fun all(predicate: (T?) -> Boolean): Boolean {
-        return cells.map { cell -> get(cell) }
-                .all(predicate)
+        return values.values.all(predicate)
     }
-
 
 }
