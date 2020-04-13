@@ -1,12 +1,10 @@
 package games.gameOfFifteen
 
+import board.Cell
 import board.Direction
-import board.GameBoard
+import board.Direction.*
 import board.createGameBoard
 import games.game.Game
-import games.game2048.Game2048Initializer
-import games.game2048.RandomGame2048Initializer
-import games.game2048.addNewValue
 
 /*
  * Implement the Game of Fifteen (https://en.wikipedia.org/wiki/15_puzzle).
@@ -19,9 +17,9 @@ class GameOfFifteen(private val initializer: GameOfFifteenInitializer) : Game {
     private val board = createGameBoard<Int?>(4)
 
     override fun initialize() {
-        val initialPermutation = initializer.initialPermutation
-        TODO("fill board I guess from left to right and from up to down")
-        TODO("where to put the empty cell?")
+        initializer.initialPermutation
+                .withIndex()
+                .forEach { board[convertPermutationIndexToCell(it.index)] = it.value }
     }
 
     override fun canMove(): Boolean {
@@ -29,15 +27,36 @@ class GameOfFifteen(private val initializer: GameOfFifteenInitializer) : Game {
     }
 
     override fun hasWon(): Boolean {
-        TODO("check whether cells are filled with 1 till 15 and last cell empty")
+        return initializer.initialPermutation
+                .sorted()
+                .withIndex()
+                .all {
+                    board[convertPermutationIndexToCell(it.index)] == it.value
+                }
     }
 
     override fun processMove(direction: Direction) {
-        TODO("Not yet implemented")
+        with(board) {
+            val emptyCell: Cell = board.find { it == null }!!
+
+            // if you press LEFT, you want the Cell RIGHT of the empty Cell to swap with the empty Cell
+            val cellToSwap = emptyCell.getNeighbour(direction.reversed())
+
+            cellToSwap?.let {
+                set(emptyCell, get(cellToSwap))
+                set(cellToSwap, null)
+            }
+        }
     }
 
     override fun get(i: Int, j: Int): Int? {
         return board.get(board.getCell(i, j))
+    }
+
+    private fun convertPermutationIndexToCell(index: Int): Cell {
+        val row = (index / board.width) + 1
+        val column = (index % board.width) + 1
+        return Cell(row, column)
     }
 
 }
