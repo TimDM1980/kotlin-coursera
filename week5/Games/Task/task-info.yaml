@@ -299,14 +299,14 @@ files:
 - name: src/games/gameOfFifteen/GameOfFifteenHelper.kt
   visible: true
   placeholders:
-  - offset: 480
-    length: 6
+  - offset: 1201
+    length: 34
     placeholder_text: TODO()
     initial_state:
       length: 6
       offset: 480
     initialized_from_dependency: false
-    selected: false
+    selected: true
     status: Unchecked
   text: |-
     package games.gameOfFifteen

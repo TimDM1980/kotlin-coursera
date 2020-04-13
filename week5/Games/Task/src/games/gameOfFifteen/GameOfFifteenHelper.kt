@@ -11,5 +11,45 @@ package games.gameOfFifteen
  * Thus the initial permutation should be correct.
  */
 fun isEven(permutation: List<Int>): Boolean {
-    TODO()
+    val smallestIntPresentInTheList = permutation.sorted().first()
+    val mapOfUnpermutatedAndPermutatedInts: Map<Int, Int> = permutation
+            .withIndex()
+            .map { it.index + smallestIntPresentInTheList to it.value }
+            .toMap()
+    println(mapOfUnpermutatedAndPermutatedInts)
+
+    var numberOfSwaps = 0
+
+    while (hasSwapsLeftToUndoPermutation(mapOfUnpermutatedAndPermutatedInts)) {
+        val indexToSwap: Int = findIndexOfItemToSwap(mapOfUnpermutatedAndPermutatedInts)!!
+        val indexToSwapWith: Int = findIndexOfItemToSwapWith(mapOfUnpermutatedAndPermutatedInts, indexToSwap)
+        doSwap(mapOfUnpermutatedAndPermutatedInts, indexToSwap, indexToSwapWith)
+        numberOfSwaps++
+    }
+
+    return numberOfSwaps % 2 == 0
+}
+
+fun hasSwapsLeftToUndoPermutation(mapOfUnpermutatedAndPermutatedInts: Map<Int, Int>): Boolean {
+    return findIndexOfItemToSwap(mapOfUnpermutatedAndPermutatedInts) != null
+}
+
+fun findIndexOfItemToSwap(mapOfUnpermutatedAndPermutatedInts: Map<Int, Int>): Int? {
+    return mapOfUnpermutatedAndPermutatedInts.map { it.key to it.value }
+            .firstOrNull { (index, value) -> value > index } // if the value is bigger than the index, it means the element is not in the right place
+            ?.first
+}
+
+fun findIndexOfItemToSwapWith(mapOfUnpermutatedAndPermutatedInts: Map<Int, Int>, indexToSwap: Int): Int {
+    return mapOfUnpermutatedAndPermutatedInts
+            .entries
+            .first { it.value == indexToSwap }
+            .key
+}
+
+fun doSwap(mapOfUnpermutatedAndPermutatedInts: Map<Int, Int>, indexToSwap: Int, indexToSwapWith: Int) {
+    val putThisAside = mapOfUnpermutatedAndPermutatedInts.getValue(indexToSwap)
+    val mutable: MutableMap<Int, Int> = mapOfUnpermutatedAndPermutatedInts as MutableMap<Int, Int>
+    mutable[indexToSwap] = mapOfUnpermutatedAndPermutatedInts.getValue(indexToSwapWith)
+    mutable[indexToSwapWith] = putThisAside
 }
