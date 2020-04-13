@@ -18,29 +18,29 @@ package games.game2048
  * You can find more examples in 'TestGame2048Helper'.
 */
 fun <T : Any> List<T?>.moveAndMergeEqual(merge: (T) -> T): List<T> {
-    val zippedPairs = this // b, null, a, a
+    return this // b, null, a, a
             .filterNotNull() // b, a, a
             .windowed(2, 1, true,
-                    { window -> Pair(window[0], window.getOrNull(1)) }) //b-a, a-a, a-null
-    val zippedEqualPairs = moveAndMergeEqualRecursive(zippedPairs) // b-null, a-a
-    return zippedEqualPairs.map { //b, aa
-        when {
-            it.first == it.second -> merge(it.first)
-            else -> it.first
-        }
-    }
+                    { window -> Pair(window[0], window.getOrNull(1)) }) // b-a, a-a, a-null
+            .let { zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(it) } // b-null, a-a
+            .map { if (it.first == it.second) merge(it.first) else it.first} // b, aa
 }
 
-private fun <T : Any> moveAndMergeEqualRecursive(zippedPairs: List<Pair<T, T?>>): List<Pair<T, T?>> {
-    val firstPair: Pair<T, T?> = zippedPairs[0]
+private fun <T : Any> zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(zippedWithNext: List<Pair<T, T?>>): List<Pair<T, T?>> {
+    val firstPair: Pair<T, T?> = zippedWithNext[0]
     return when {
-        zippedPairs.isEmpty() -> emptyList()
-        zippedPairs.size == 1 -> {
-            if (firstPair.first == firstPair.second) listOf(firstPair) else listOf(Pair(firstPair.first, null))
-        }
-        (zippedPairs.size == 2 && firstPair.first == firstPair.second) -> listOf(firstPair)
-        firstPair.first == firstPair.second -> listOf(firstPair) + moveAndMergeEqualRecursive(zippedPairs.subList(2, zippedPairs.size))
-        else -> listOf(Pair(firstPair.first, null)) + moveAndMergeEqualRecursive(zippedPairs.subList(1, zippedPairs.size))
+        zippedWithNext.isEmpty() -> emptyList()
+
+        firstPair.first == firstPair.second -> listOf(firstPair) +
+                when {
+                    zippedWithNext.size <= 2 -> emptyList()
+                    else -> zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(zippedWithNext.subList(2, zippedWithNext.size))
+                }
+
+        else -> listOf(Pair(firstPair.first, null)) +
+                when {
+                    zippedWithNext.size == 1 -> emptyList()
+                    else -> zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(zippedWithNext.subList(1, zippedWithNext.size))
+                }
     }
 }
-
