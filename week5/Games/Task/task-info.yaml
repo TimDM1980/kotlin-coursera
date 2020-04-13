@@ -48,7 +48,7 @@ files:
 - name: src/board/BoardImpl.kt
   visible: true
   placeholders:
-  - offset: 2213
+  - offset: 2355
     length: 6
     placeholder_text: TODO()
     initial_state:
@@ -57,7 +57,7 @@ files:
     initialized_from_dependency: false
     selected: false
     status: Unchecked
-  - offset: 2272
+  - offset: 2414
     length: 6
     placeholder_text: TODO()
     initial_state:
@@ -230,13 +230,13 @@ files:
   visible: true
   placeholders:
   - offset: 820
-    length: 6
+    length: 123
     placeholder_text: TODO()
     initial_state:
       length: 6
       offset: 820
     initialized_from_dependency: false
-    selected: false
+    selected: true
     status: Unchecked
   text: |-
     package games.game2048

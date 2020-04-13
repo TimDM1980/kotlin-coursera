@@ -59,14 +59,15 @@ class BoardImpl<T>(override val width: Int) : SquareBoard, GameBoard<T> {
     }
 
     override fun filter(predicate: (T?) -> Boolean): Collection<Cell> {
-        return values.filterValues(predicate)
-                .keys
+        return cells.map { cell -> Pair(cell, get(cell)) }
+                .filter({ pair -> pair.second.let(predicate) })
+                .map { it.first }
     }
 
     override fun find(predicate: (T?) -> Boolean): Cell? {
-        return values.filterValues(predicate)
-                .keys
-                .firstOrNull()
+        return cells.map { cell -> Pair(cell, get(cell)) }
+                .firstOrNull({ pair -> pair.second.let(predicate) })
+                ?.first
     }
 
     override fun any(predicate: (T?) -> Boolean): Boolean {
