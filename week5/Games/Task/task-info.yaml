@@ -229,8 +229,8 @@ files:
 - name: src/games/game2048/Game2048Initializer.kt
   visible: true
   placeholders:
-  - offset: 861
-    length: 157
+  - offset: 820
+    length: 184
     placeholder_text: TODO()
     initial_state:
       length: 6

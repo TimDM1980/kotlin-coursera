@@ -22,10 +22,10 @@ object RandomGame2048Initializer: Game2048Initializer<Int> {
      * Use the 'generateRandomStartValue' function above.
      * If the board is full return null.
      */
-    @OptIn(ExperimentalStdlibApi::class)
     override fun nextValue(board: GameBoard<Int?>): Pair<Cell, Int>? {
         return board.filter { it == null }
-                .randomOrNull()
+                .shuffled()
+                .firstOrNull()
                 ?.let { randomCell -> Pair(randomCell, generateRandomStartValue()) }
     }
 }
