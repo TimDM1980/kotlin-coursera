@@ -27,11 +27,11 @@ fun <T : Any> List<T?>.moveAndMergeEqual(merge: (T) -> T): List<T> {
 }
 
 private fun <T : Any> zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(zippedWithNext: List<Pair<T, T?>>): List<Pair<T, T?>> {
-    val firstPair: Pair<T, T?> = zippedWithNext[0]
+    val firstPair: Pair<T, T?>? = zippedWithNext.getOrNull(0)
     return when {
         zippedWithNext.isEmpty() -> emptyList()
 
-        firstPair.first == firstPair.second -> listOf(firstPair) +
+        firstPair!!.first == firstPair.second -> listOf(firstPair) +
                 when {
                     zippedWithNext.size <= 2 -> emptyList()
                     else -> zipRecursive_AsIdenticalPairs_OrAsPairsWithNullAsSecond(zippedWithNext.subList(2, zippedWithNext.size))

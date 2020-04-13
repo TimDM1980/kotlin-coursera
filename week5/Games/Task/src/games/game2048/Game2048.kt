@@ -2,6 +2,7 @@ package games.game2048
 
 import board.Cell
 import board.Direction
+import board.Direction.*
 import board.GameBoard
 import board.createGameBoard
 import games.game.Game
@@ -55,22 +56,18 @@ fun GameBoard<Int?>.addNewValue(initializer: Game2048Initializer<Int>) {
  */
 fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
     val oldValues = rowOrColumn.map { cell -> get(cell) }
-    val newValuesToBeStored = oldValues.moveAndMergeEqual { it * it }
+    val newValuesToBeStored = oldValues.moveAndMergeEqual { it + it }
 
-    return if (oldValues != newValuesToBeStored) {
-        val newCellsAndValuesToBeStored: List<Pair<Cell, Int>> = rowOrColumn.zip(newValuesToBeStored)
+    val newCellsAndValuesToBeStored: List<Pair<Cell, Int>> = rowOrColumn.zip(newValuesToBeStored)
 
-        for (cell in rowOrColumn) {
-            set(cell, null)
-        }
-        for (pair in newCellsAndValuesToBeStored) {
-            set(pair.first, pair.second)
-        }
-
-        true
-    } else {
-        false
+    for (cell in rowOrColumn) {
+        set(cell, null)
     }
+    for (pair in newCellsAndValuesToBeStored) {
+        set(pair.first, pair.second)
+    }
+
+    return oldValues != rowOrColumn.map { cell -> get(cell) }
 }
 
 /*
@@ -81,5 +78,22 @@ fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
  * Return 'true' if the values were moved and 'false' otherwise.
  */
 fun GameBoard<Int?>.moveValues(direction: Direction): Boolean {
-    TODO()
+    val rowOrColumnGetter: (Int) -> List<Cell> = when(direction) {
+        LEFT -> {
+            { i -> getRow(i, 1..width) }
+        }
+        RIGHT -> {
+            { i -> getRow(i, width downTo 1) }
+        }
+        UP -> {
+            { j -> getColumn(1..width, j) }
+        }
+        DOWN -> {
+            { j -> getColumn(width downTo 1, j) }
+        }
+    }
+
+    return (1..width).map { w -> moveValuesInRowOrColumn(rowOrColumnGetter(w)) }
+            .also { println(it) }
+            .any { it }
 }
